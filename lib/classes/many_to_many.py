@@ -1,5 +1,3 @@
-
-
 class Article:
     all_articles = []
 
@@ -15,24 +13,35 @@ class Article:
     def set_title(self, title):
         if isinstance(title,str) and len(title) > 0:
             self._title = title
+            
 
     title = property(get_title, set_title)
 
-    def add_entry(self):
-        return self._title      
+    # def add_entry(self):
+    #     return self._title      
         
 class Author:
     def __init__(self, name):
         self.name = name
         self._articles = []
+        self._magazines = []
 
+    @property    
+    def name(self):
+        return self._name
+    
+    @name.setter
+    def name(self, name):
+        if isinstance(name, str) and len(name) > 0:
+            self._name = name
     def get_name(self):
         return self._name
     
     def set_name(self, name):
         if isinstance(name, str) and len(name) > 0:
             self._name = name
-    name = property(get_name, set_name)        
+
+    name = property(get_name, set_name)
 
     def articles(self):
         return [article for article in Article.all_articles if article.author == self]
@@ -54,23 +63,35 @@ class Magazine:
     def __init__(self, name, category):
         self._name = name
         self._category = category
+        self._contributors = []
+        self._articles = []
+        self.articles_per_author = {}  # Initialize the dictionary here
 
-    def get_name(self):
+    @property
+    def name(self):
         return self._name   
-     
-    def set_name(self, name):
+    
+    @name.setter
+    def name(self, name):
         if isinstance(name, str) and len(name) > 0:
             self._name = name
-    name = property(get_name, set_name)
-    
-    def get_category(self):
+
+    @property
+    def category(self):
         return self._category
     
-    def set_category (self, category):
+    @category.setter
+    def category(self, category):
         if isinstance(category, str) and len(category) > 0:
             self._category = category
 
-    category = property(get_category, set_category)  
+    _articles = []
+    def gat_name(self):
+        return self._name
+
+    def get_category(self):
+        return self._category
+     
 
     def articles(self):
         return [article for article in Article.all_articles if article.magazine == self]
@@ -84,6 +105,9 @@ class Magazine:
 
     def contributing_authors(self):
         for article in self.articles():
-            articles_per_author[article.author] += 1
-        contributing_authors = [author for author, count in articles_per_author.items() if count > 2]
+            if article.author in self.articles_per_author:
+                self.articles_per_author[article.author] += 1
+            else:
+                self.articles_per_author[article.author] = 1
+        contributing_authors = [author for author, count in self.articles_per_author.items() if count > 2]
         return contributing_authors if contributing_authors else None
